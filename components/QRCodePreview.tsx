@@ -7,9 +7,12 @@ type QRCodePreviewProps = {
   filename?: string
 }
 
-const BASE_URL = "http://localhost:3000"
+const BASE_URL = "https://estate-agent-qr.vercel.app"
 
-export default function QRCodePreview({ slug, filename = "property-qr-code" }: QRCodePreviewProps) {
+export default function QRCodePreview({
+  slug,
+  filename = "property-qr-code",
+}: QRCodePreviewProps) {
   const safeSlug = String(slug || "").trim()
   const qrValue = `${BASE_URL}/b/${safeSlug}`
 
