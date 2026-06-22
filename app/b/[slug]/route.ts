@@ -3,6 +3,7 @@ import supabaseAdmin from "../../../lib/supabaseServer"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
+export const fetchCache = "force-no-store"
 
 export async function GET(
   req: Request,
@@ -12,7 +13,7 @@ export async function GET(
 
   const { data: board, error: boardError } = await supabaseAdmin
     .from("boards")
-    .select("*")
+    .select("id, destination_url, scan_count")
     .eq("slug", slug)
     .maybeSingle()
 
@@ -32,7 +33,7 @@ export async function GET(
     req.headers.get("x-real-ip") ||
     null
 
-  const { error: scanError } = await supabaseAdmin.from("scans").insert([
+  await supabaseAdmin.from("scans").insert([
     {
       board_id: board.id,
       user_agent: ua,
@@ -41,23 +42,17 @@ export async function GET(
     },
   ])
 
-  if (scanError) {
-    console.error("Scan insert error:", scanError)
-  }
-
-  const { error: countError } = await supabaseAdmin
+  await supabaseAdmin
     .from("boards")
     .update({ scan_count: (board.scan_count || 0) + 1 })
     .eq("id", board.id)
 
-  if (countError) {
-    console.error("Scan count update error:", countError)
-  }
-
-  return NextResponse.redirect(board.destination_url, {
+  return NextResponse.redirect(new URL(board.destination_url), {
     status: 302,
     headers: {
-      "Cache-Control": "no-store",
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
     },
   })
 }
