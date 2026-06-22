@@ -89,18 +89,43 @@ export default function BoardTable({
     const s = await supabase.auth.getSession()
     const token = s.data?.session?.access_token
 
-    await fetch("/api/boards", {
+    const cleanedForm = {
+      ...form,
+      destination_url: form.destination_url?.trim(),
+    }
+
+    const res = await fetch("/api/boards", {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ id, ...form }),
+      body: JSON.stringify({ id, ...cleanedForm }),
     })
+
+    if (!res.ok) {
+      alert("Save failed. Please try again.")
+      return
+    }
 
     setEditingId(null)
     setForm({})
     onChange?.()
+  }
+
+  const handleEditKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    id: string
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      save(id)
+    }
+
+    if (e.key === "Escape") {
+      e.preventDefault()
+      cancelEdit()
+    }
   }
 
   return (
@@ -117,6 +142,7 @@ export default function BoardTable({
                   placeholder="Property address"
                   value={form.name ?? ""}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
                 <input
@@ -124,6 +150,7 @@ export default function BoardTable({
                   placeholder="Estate agency"
                   value={form.agent_name ?? ""}
                   onChange={(e) => setForm({ ...form, agent_name: e.target.value })}
+                  onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
                 <input
@@ -131,6 +158,7 @@ export default function BoardTable({
                   placeholder="Branch"
                   value={form.branch_name ?? ""}
                   onChange={(e) => setForm({ ...form, branch_name: e.target.value })}
+                  onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
                 <input
@@ -138,6 +166,7 @@ export default function BoardTable({
                   placeholder="Property URL / Rightmove link"
                   value={form.destination_url ?? ""}
                   onChange={(e) => setForm({ ...form, destination_url: e.target.value })}
+                  onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
                 <div className="flex gap-2 mt-2">
