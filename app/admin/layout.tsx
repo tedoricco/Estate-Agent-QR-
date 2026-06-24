@@ -5,7 +5,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <header className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-medium">Admin Dashboard</h2>
+        <h2 className="text-2xl font-medium">Estate Agent Analytics Dashboard</h2>
         <nav>
           <Link href="/">Home</Link>
         </nav>
