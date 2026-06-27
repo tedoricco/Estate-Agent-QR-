@@ -134,7 +134,10 @@ export default function BoardTable({
         const analytics = b.analytics
 
         return (
-          <div key={b.id} className="bg-white p-5 rounded-lg shadow border border-slate-100">
+          <div
+            key={b.id}
+            className="bg-white p-4 sm:p-5 rounded-lg shadow border border-slate-100 overflow-hidden"
+          >
             {editingId === b.id ? (
               <div className="grid gap-2">
                 <input
@@ -149,7 +152,9 @@ export default function BoardTable({
                   className="p-2 border rounded"
                   placeholder="Estate agency"
                   value={form.agent_name ?? ""}
-                  onChange={(e) => setForm({ ...form, agent_name: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, agent_name: e.target.value })
+                  }
                   onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
@@ -157,7 +162,9 @@ export default function BoardTable({
                   className="p-2 border rounded"
                   placeholder="Branch"
                   value={form.branch_name ?? ""}
-                  onChange={(e) => setForm({ ...form, branch_name: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, branch_name: e.target.value })
+                  }
                   onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
@@ -165,7 +172,9 @@ export default function BoardTable({
                   className="p-2 border rounded"
                   placeholder="Property URL / Rightmove link"
                   value={form.destination_url ?? ""}
-                  onChange={(e) => setForm({ ...form, destination_url: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, destination_url: e.target.value })
+                  }
                   onKeyDown={(e) => handleEditKeyDown(e, b.id)}
                 />
 
@@ -177,69 +186,92 @@ export default function BoardTable({
                     Save
                   </button>
 
-                  <button className="px-3 py-1 border rounded" onClick={cancelEdit}>
+                  <button
+                    className="px-3 py-1 border rounded"
+                    onClick={cancelEdit}
+                  >
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between gap-6">
-                <div className="flex-1">
-                  <div className="text-xl font-semibold text-slate-900">{b.name}</div>
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-6">
+                <div className="min-w-0 flex-1">
+                  <div className="text-xl font-semibold text-slate-900 break-words">
+                    {b.name}
+                  </div>
 
-                  <div className="text-sm text-slate-600 mt-1">
+                  <div className="text-sm text-slate-600 mt-1 break-words">
                     {b.agent_name || "No agency"} • {b.branch_name || "No branch"}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-5 gap-3 max-w-4xl">
-                    <div className="bg-slate-50 border border-slate-100 rounded p-3">
+                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
+                    <div className="bg-slate-50 border border-slate-100 rounded p-3 min-w-0">
                       <div className="text-xs text-slate-500">Total scans</div>
                       <div className="text-2xl font-semibold">
                         {analytics?.total ?? b.scan_count ?? 0}
                       </div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-100 rounded p-3">
+                    <div className="bg-slate-50 border border-slate-100 rounded p-3 min-w-0">
                       <div className="text-xs text-slate-500">Today</div>
-                      <div className="text-2xl font-semibold">{analytics?.today ?? 0}</div>
+                      <div className="text-2xl font-semibold">
+                        {analytics?.today ?? 0}
+                      </div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-100 rounded p-3">
+                    <div className="bg-slate-50 border border-slate-100 rounded p-3 min-w-0">
                       <div className="text-xs text-slate-500">This week</div>
-                      <div className="text-2xl font-semibold">{analytics?.this_week ?? 0}</div>
+                      <div className="text-2xl font-semibold">
+                        {analytics?.this_week ?? 0}
+                      </div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-100 rounded p-3">
+                    <div className="bg-slate-50 border border-slate-100 rounded p-3 min-w-0">
                       <div className="text-xs text-slate-500">This month</div>
-                      <div className="text-2xl font-semibold">{analytics?.this_month ?? 0}</div>
+                      <div className="text-2xl font-semibold">
+                        {analytics?.this_month ?? 0}
+                      </div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-100 rounded p-3">
+                    <div className="bg-slate-50 border border-slate-100 rounded p-3 min-w-0 col-span-2 sm:col-span-1">
                       <div className="text-xs text-slate-500">Last scan</div>
-                      <div className="text-sm font-medium">
+                      <div className="text-sm font-medium break-words">
                         {formatLastScan(analytics?.last_scan)}
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-3 text-xs text-slate-500">
+                  <div className="mt-3 text-xs text-slate-500 break-all">
                     QR ID: <span className="font-mono">{b.slug}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-5">
-                  <QRCodePreview slug={String(b.slug)} filename={makeFileName(b)} />
+                <div className="flex flex-col sm:flex-row lg:flex-row items-start sm:items-center gap-4 sm:gap-5">
+                  <div className="w-full sm:w-auto flex justify-center sm:justify-start">
+                    <QRCodePreview slug={String(b.slug)} filename={makeFileName(b)} />
+                  </div>
 
-                  <div className="flex flex-col gap-2 text-sm">
-                    <a className="text-indigo-600" href={`/b/${b.slug}`} target="_blank">
+                  <div className="w-full sm:w-auto flex flex-col gap-2 text-sm">
+                    <a
+                      className="text-indigo-600"
+                      href={`/b/${b.slug}`}
+                      target="_blank"
+                    >
                       Open property
                     </a>
 
-                    <button className="text-left text-indigo-600" onClick={() => startEdit(b)}>
+                    <button
+                      className="text-left text-indigo-600"
+                      onClick={() => startEdit(b)}
+                    >
                       Edit
                     </button>
 
-                    <button className="text-left text-red-600" onClick={() => del(b.id)}>
+                    <button
+                      className="text-left text-red-600"
+                      onClick={() => del(b.id)}
+                    >
                       Delete
                     </button>
                   </div>
